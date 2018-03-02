@@ -1,29 +1,39 @@
 package org.paleozogt.gtestrunner;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+import org.apache.commons.lang3.mutable.MutableObject;
 
-    // Used to load the 'native-lib' library on application startup.
-    static {
-        System.loadLibrary("native-lib");
-    }
+public class MainActivity extends AppCompatActivity {
+    GTestRunner gTestRunner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Example of a call to a native method
-        TextView tv = (TextView) findViewById(R.id.sample_text);
-        tv.setText(stringFromJNI());
-    }
+        gTestRunner = new GTestRunner(this);
 
-    /**
-     * A native method that is implemented by the 'native-lib' native library,
-     * which is packaged with this application.
-     */
-    public native String stringFromJNI();
+        final TextView testOutput = (TextView) findViewById(R.id.test_output);
+
+        final Spinner testListSpinner = (Spinner) findViewById(R.id.test_list);
+        testListSpinner.setAdapter(new ArrayAdapter<String>(
+                this, android.R.layout.simple_spinner_item, gTestRunner.getTests()));
+
+        Button runTestsButton = (Button) findViewById(R.id.run_tests);
+        runTestsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MutableObject<String> output= new MutableObject<>();
+                gTestRunner.run("--gtest_filter=" + testListSpinner.getSelectedItem(), output);
+                testOutput.setText(output.getValue());
+            }
+        });
+    }
 }

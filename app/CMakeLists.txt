@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4.1)
-add_library(native-lib SHARED src/main/cpp/native-lib.cpp)
 
-find_library(log-lib log)
+add_subdirectory(src/main/cpp/gtest)
 
-target_link_libraries(native-lib ${log-lib})
+add_library(GTestRunner SHARED src/main/cpp/GTestRunnerJNI.cpp src/main/cpp/tests.cpp)
+target_link_libraries(GTestRunner log gtest)

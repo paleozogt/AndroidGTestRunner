@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">GTestRunner</string>
+
+    <string name="run_tests">Run Test</string>
 </resources>
